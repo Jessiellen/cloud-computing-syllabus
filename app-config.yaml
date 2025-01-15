@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="pt">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Minha Mensagem</title>
+    </head>
+    <body>
+      <h1>Bem-vindo ao meu site!</h1>
+      <p>Esta é a minha mensagem personalizada.</p>
+    </body>
+    </html>
+kind: ConfigMap
+metadata:
+  name: app-config
+
+  

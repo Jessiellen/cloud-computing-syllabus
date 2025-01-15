@@ -34,8 +34,7 @@ kubectl cluster-info
 ### 2. Kubernetes Architecture
 1. Explore the cluster components:
    ```bash
-   kubectl get nodes
-   kubectl describe node <node-name>
+!   kubectl describe node <node-name>
    ```
 2. Learn about core components (API Server, Scheduler, kubelet, etc.) using the Kubernetes documentation.
 

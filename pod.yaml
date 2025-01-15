@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: app
+  name: app2
+spec:
+  containers:
+  - name: app
+    image: nginx:alpine
+  - name: subapp
+    image: nginx:alpine
+
