@@ -1,0 +1,74 @@
+# Crie uma infraestrutura flexível que suporte a implantação para três clientes distintos:
+#   -Netflix
+#   -Meta
+#   -Estrela do rock
+# Implementar mecanismos de configuração específicos do cliente usando variáveis ​​e espaços de trabalho:
+
+Para criar uma infraestrutura flexível no Kubernetes utilizei recursos padrão do Kubernetes, como Namespaces, ConfigMaps, Secrets e Deployments seguindo a documentação oficial. 
+Fiz de uma forma que cada cliente teria seu próprio ambiente isolado, onde as configurações, dados sensíveis e aplicativos serão definidos de forma específica.
+
+1)Para isto criei três namespaces netflix, meta e estrela-do-rock fazendo com que cada cliente tenha seu próprio Namespace(como pods, serviços e volumes).
+
+Comando utilizado:
+kubectl apply -f namespaces.yaml
+
+2)Em seguida usei o ConfigMap para guardar configurações que os pods vão usar, essas configurações podem ser coisas como variáveis de ambiente, que ajudam a definir como o sistema vai se comportar.
+Cada cliente vais ter sua própria variável, a Netflix terá um ConfigMap com variáveis como CLIENT_NAME, API_KEY e FEATURE_TOGGLE.
+Quando os pods do cliente Netflix rodarem, eles vão pegar essas variáveis do ConfigMap e configurar o app de acordo com o que foi definido para aquele cliente — tipo, qual nome usar, qual chave de API utilizar e se algum recurso deve estar ativado ou desativado.
+Com isso, será possivel organizar e personalizar as configurações de cada cliente de uma forma fácil de acessar.
+
+Comando utilizado:
+kubectl apply -f configmaps.yaml
+
+3)Depois que as variáveis foram configuradas,protegi dados sensíveis, como chaves de API e senhas. 
+Para isso, usei o Secret do Kubernetes, que armazena esses dados de forma segura e codificada (em base64).
+Cada cliente terá seu próprio Secret para armazenar informações sensíveis, como a chave de API. 
+No caso do cliente Netflix, o Secret guarda essa chave de maneira segura, evitando que ela seja exposta como texto simples,assim, o Kubernetes garante a segurança dos dados.
+
+Comando utilizado:
+kubectl apply -f secrets.yaml
+
+4)O próximo passo é implantar os Deployments, que cria e gerencia os pods, definindo número de réplicas, imagem do container e variáveis de ambiente.
+Para cada cliente, criei um Deployment que configura os pods com as variáveis do ConfigMap e Secret. 
+Por exemplo, para o cliente Netflix, o Deployment usa o nome do cliente, chave de API e estado das funcionalidades.
+
+Comando utilizado:
+kubectl apply -f netflix-deployment.yaml
+kubectl apply -f meta-deployment.yaml
+kubectl apply -f estrela-do-rock-deployment.yaml
+
+5)Para finalizar esta primeira etapa verifiquei se tudo está configurado corretamente. 
+
+Usei comandos para listar namespaces, ConfigMaps, Secrets e Deployments, e verificar o estado dos pods. 
+Isso garante que tudo esteja funcionando como esperado, assim se for necessário, posso ajustar as configurações, tambem utilizei o K9s para fazer esta verificação.
+
+Comando utilizado:
+kubectl get namespaces (Verificar Namespaces)
+kubectl get configmaps --all-namespaces (Verificar Configmaps em Namespaces)
+kubectl get secrets --all-namespaces (Verificar os Secrets criados em Namespaces)
+kubectl get deployments --all-namespaces (Verificar os Deployments criados em Namespaces)
+kubectl get pods --all-namespaces (Verificar os Pods em execução)
+
+# Requisitos do cluster Kubernetes
+#  -Implantar um cluster Kubernetes usando o Minikube
+#  -Garanta uma configuração de cluster robusta e escalável
+#  -Suporte à criação de namespace dinâmico
+
+1)Iniciei o cluster com os recursos padrão de CPU, memória e disco, que o Minikube faz automaticamente para o cluster Kubernetes local,para a  maioria dos casos de desenvolvimento e testes.
+
+Comando utilizado:
+minikube start
+
+2)Após iniciar o Minikube, verifiquei se o cluster foi iniciado corretamente, esse comando vai te mostrar se o cluster está em execução e outtras infomações.
+
+Comando utilizado:
+minikube status
+
+3)Com o HPA implementado e configurado corretamente, o sistema agora é capaz de ajustar automaticamente o número de réplicas dos pods do Metrics Server de acordo com a carga de CPU. 
+Isso melhora a eficiência do sistema, garantindo que recursos sejam alocados adequadamente durante períodos de alta demanda, ao mesmo tempo em que reduz o número de réplicas quando a carga diminui, economizando recursos.
+
+Comando utilizado:
+kubectl apply -f hpa-metrics-server.yaml (Aplicação)
+kubectl get hpa -n kube-system (Verificação e Monitoramento)
+kubectl describe hpa metrics-server-hpa -n kube-system (Verificação e Monitoramento)
+
